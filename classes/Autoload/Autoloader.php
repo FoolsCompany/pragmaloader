@@ -162,8 +162,13 @@ class Autoloader {
 		}
 
 		$namespace = strtr($classname,"\\","/");		
-		$namespace = substr($namespace,0,$tmp = strrpos($namespace,'/')?:0);
-		$class = substr($classname,$tmp);
+		$tmp = strrpos($namespace,'/');
+		$namespace = substr($namespace,0,$tmp?:0);
+		if($tmp){
+			$class = substr($classname,$tmp+1);
+		}else{
+			$class = substr($classname,$tmp+1);
+		}
 		if (!file_exists($sourcefile = self::dir.$namespace."/".$class.'.php')) {
 			throw new AutoloadException("Could not find source {$sourcefile}");
 		}
