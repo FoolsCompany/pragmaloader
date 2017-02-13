@@ -40,7 +40,7 @@ class ArgumentObject {
 
 class ClassObject extends NSObject {
 	public function toString() {
-		$code = $this->extern;
+		$code = strlen($this->extern)?"{$this->extern}\n":"";
 		$code .= "class {$this->name}";		
 		$code .= substr($this->code,strpos($this->code,"{"))."\n";
 		return $code;
@@ -327,7 +327,7 @@ class ClassFileOperations {
 	
 	private function _transpile($namespace,$classname,$prefix){
 		$class = $this->structure[$namespace][$classname];
-		$code = "<?php\nnamespace $namespace;\n".$this->_output($namespace,$classname);
+		$code = "<?php\n".(strlen($namespace)?"namespace $namespace;\n":"").$this->_output($namespace,$classname);
 		$pragmas = Globals::getInstance()->__pragmas__;
 		is_null($pragmas) && ($pragmas = []);
 		$pragmas[$namespace][$class->name] = $this->pragmas;

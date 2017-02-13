@@ -25,6 +25,13 @@ class Globals {
 		}
 		return false;
 	}
+	public function getPragmasNsClass($ns,$class) {
+		if(!isset($this->globals["__pragmas__"]) ||
+		   !isset($this->globals["__pragmas__"][$ns]) ||
+		   !isset($this->globals["__pragmas__"][$ns][$class]))
+				return [];
+		return $this->globals["__pragmas__"][$ns][$class];
+	}
 	public static function object_to_array($feed) {
 		if(is_object($feed)){
 			$feed = (array) $feed;

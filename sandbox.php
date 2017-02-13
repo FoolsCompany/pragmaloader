@@ -1,10 +1,11 @@
 <?php
 
-if($argc == 0 || !strlen($url = $argv[1])){
-	die("Usage: ". cli_get_process_title()." <url> < <postfile> > <out.pprof>");
+require_once(__DIR__."/classes/Sandbox.php");
+
+if($argc == 1 || !strlen($url = $argv[1])){
+	die("Usage: ". cli_get_process_title()." <url> < <postfile> > <out.pprof>\n");
 }
 
-Sandbox::init("http://lincus.anthrax",$working_dir,$url);
+Sandbox::init("http://blez.anthrax","/code/msc/blez/public",$url);
 Sandbox::route($url);
-Sandbox::dump("out");
-Sandbox::dumpSql();
+Sandbox::dump("sandbox");

@@ -82,7 +82,7 @@ class Autoloader {
 				return [$value];
 			return $value;
 		}
-		return null;
+		return [];
 	}
 
 	/**
@@ -161,9 +161,10 @@ class Autoloader {
 			}
 		}
 
-		$namespace = substr($classname,0,$tmp = strrpos($classname,'\\'));
-		$class = substr($classname,$tmp+1);
-		if (!file_exists($sourcefile = self::dir.strtr($namespace,"\\","/")."/".$class.'.php')) {
+		$namespace = strtr($classname,"\\","/");		
+		$namespace = substr($namespace,0,$tmp = strrpos($namespace,'/')?:0);
+		$class = substr($classname,$tmp);
+		if (!file_exists($sourcefile = self::dir.$namespace."/".$class.'.php')) {
 			throw new AutoloadException("Could not find source {$sourcefile}");
 		}
 		$objectfile = Globals::getInstance()->lookup($namespace,$class);
@@ -175,7 +176,7 @@ class Autoloader {
 				throw new AutoloadException("{$sourcefile} does not contain $namespace".'\\'."$class");
 			}
 		}
-		$pragmas = Globals::getInstance()->__pragmas__[$namespace][$class];
+		$pragmas = Globals::getInstance()->getPragmasNsClass($namespace,$class);
 		is_null($pragmas) && ($pragmas = []);
 		foreach($pragmas as $pragma => $value){
 			switch($pragma){

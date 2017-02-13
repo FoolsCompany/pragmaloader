@@ -5,7 +5,7 @@ class Sandbox {
 	static $uri_base;
 	
 	public static function init($domain,$working_dir,$url){
-		global $_GET,$_POST,$_REQUEST,$_SERVER;
+		global $_GET,$_POST,$_REQUEST,$_SERVER,$argv;
 		//Thanks to http://stackoverflow.com/questions/9356152/non-blocking-on-stdin-in-php-cli
 		function non_blocking_read($fd, &$data) {
 			$read = array($fd);
@@ -36,7 +36,7 @@ class Sandbox {
 			}
 		}
 
-		require_once(__DIR__."/classes/Autoload/Autoloader.php");
+		require_once(__DIR__."/Autoload/Autoloader.php");
 		if(!Autoload\Autoloader::$registered)
 			Autoload\Autoloader::register(false,true);
 
@@ -48,19 +48,26 @@ class Sandbox {
 	}
 	
 	public static function route($relative_url){
-		$_SERVER["REQUEST_URI"] = self::$uri_base."{$url}";
-		include_once(__DIR__."/login/securelogin/{$url}");
+		$_SERVER["REQUEST_URI"] = self::$uri_base."{$relative_url}";
+		include_once("{$relative_url}");
 	}
 	
-	public static function dump($suffix,$echo = true,$pprof = true){
+	public static function dump($suffix = "-",$echo = true,$pprof = true){
 		if($echo){
 			echo ob_get_contents();
 		}
 		ob_end_clean();
-		if($pprof){
-			memprof_dump_pprof(fopen("/tmp/sandbox.{$suffix}-".time().".pprof","w"));
+		
+		if($suffix=="-"){
+			$fh = fopen("php://output", "a");
 		}else{
-			memprof_dump_callgrind(fopen("/tmp/sandbox.{$suffix}-".time().".cachegrind","w"));
+			$fh = fopen("/tmp/sandbox.{$suffix}-".time(), "w");
+		}
+		
+		if($pprof){
+			memprof_dump_pprof($fh);
+		}else{
+			memprof_dump_callgrind($fh);
 		}
 	}
 	
