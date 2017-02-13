@@ -1,0 +1,9 @@
+{
+    "policy" : {
+        "strict" : true,
+        "default" : "allow"
+    },
+    "spec" : {
+        "Types\\Object" : "*"
+    }
+}
