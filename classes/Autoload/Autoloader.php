@@ -133,7 +133,7 @@ class Autoloader {
 			}	
 		}
         ini_set('unserialize_callback_func', 'spl_autoload_call');
-        spl_autoload_register(array($self = new self($fast), 'autoload'));
+        spl_autoload_register(array($self = new self($fast), 'autoload'),true);
 		register_shutdown_function (function()use($self){
 			$self->save();
 		});
@@ -162,8 +162,13 @@ class Autoloader {
 		}
 
 		$namespace = strtr($classname,"\\","/");		
-		$namespace = substr($namespace,0,$tmp = strrpos($namespace,'/')?:0);
-		$class = substr($classname,$tmp);
+		$tmp = strrpos($namespace,'/');
+		$namespace = substr($namespace,0,$tmp?:0);
+		if($tmp){
+			$class = substr($classname,$tmp+1);
+		}else{
+			$class = $classname;
+		}
 		if (!file_exists($sourcefile = self::dir.$namespace."/".$class.'.php')) {
 			throw new AutoloadException("Could not find source {$sourcefile}");
 		}
