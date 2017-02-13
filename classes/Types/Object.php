@@ -1,9 +1,7 @@
-<?php
+<?php die;
+namespace Types;
 
 /* @process=test@ */
-die;
-
-namespace Types;
 
 function stupid_code(){
 	

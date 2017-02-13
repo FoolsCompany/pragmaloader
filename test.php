@@ -2,7 +2,7 @@
 <?php
 $usec = microtime(1);
 require_once(__DIR__."/classes/Autoload/Autoloader.php");
-Autoload\Autoloader::register($argc,false);
+Autoload\Autoloader::register(true,false);
 use Types\Object;
 
 class Test extends Object {

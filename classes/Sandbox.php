@@ -38,7 +38,7 @@ class Sandbox {
 
 		require_once(__DIR__."/Autoload/Autoloader.php");
 		if(!Autoload\Autoloader::$registered)
-			Autoload\Autoloader::register(false,true);
+			Autoload\Autoloader::register(true,false);
 
 		self::$uri_base = "https://{$domain}/";
 		chdir($working_dir);

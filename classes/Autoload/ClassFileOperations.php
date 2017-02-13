@@ -40,7 +40,7 @@ class ArgumentObject {
 
 class ClassObject extends NSObject {
 	public function toString() {
-		$code = strlen($this->extern)?"{$this->extern}\n":"";
+		$code = strlen($this->extern)?$this->extern."\n":"";
 		$code .= "class {$this->name}";		
 		$code .= substr($this->code,strpos($this->code,"{"))."\n";
 		return $code;
@@ -50,7 +50,7 @@ class ClassObject extends NSObject {
 class FunctionObject extends NSObject {
 	public $arguments;
 	public function toString() {
-		$code = $this->extern;
+		$code = $this->extern."\n";
 		$code .= "function {$this->name}";
 		$code .= "(".implode(",",array_map(function($arg){return $arg->toString();},$this->arguments)).")\n";
 		$code .= substr($this->code,strpos($this->code,"{"))."\n";
@@ -165,7 +165,7 @@ class ClassFileOperations {
 	private function scan() {
 		$token = $this->advance();
 		do{
-			if(in_array($token[0],[null,T_OPEN_TAG,T_COMMENT,T_NAMESPACE,T_NS_SEPARATOR,T_CLASS,T_FUNCTION]))
+			if(in_array($token[0],[null,T_EXIT,T_OPEN_TAG,T_COMMENT,T_NAMESPACE,T_NS_SEPARATOR,T_CLASS,T_FUNCTION]))
 				return $token;
 		}while($token = $this->advance());
 		return null;
@@ -175,7 +175,7 @@ class ClassFileOperations {
 		$this->lines = explode("\n",$this->code);
 		$this->idx = -1;
 		$this->tokens = token_get_all($this->code);
-		$this->tokens = array_combine(range(0,count($this->tokens)-1),array_values($this->tokens));
+		//$this->tokens = array_combine(range(0,count($this->tokens)-1),array_values($this->tokens));
 		$this->namespace = "";
 		$this->identifier = "";
 		$this->stuff = "";
@@ -184,7 +184,7 @@ class ClassFileOperations {
 			$add = false;
 			do{
 				if(is_array($token)){
-					if(in_array($token[0],[T_NAMESPACE,T_NS_SEPARATOR,T_COMMENT,T_OPEN_TAG,T_FUNCTION,T_CLASS])){
+					if(in_array($token[0],[T_EXIT,T_NAMESPACE,T_NS_SEPARATOR,T_COMMENT,T_OPEN_TAG,T_FUNCTION,T_CLASS])){
 						switch($token[0]){
 							case T_NAMESPACE:
 								if($this->next_token(true) == '{')
@@ -204,6 +204,9 @@ class ClassFileOperations {
 								}
 								break 2;
 							case T_OPEN_TAG:
+								break 2;
+							case T_EXIT:
+								$add = !!strlen($this->namespace);
 								break 2;
 							case T_FUNCTION:
 							case T_CLASS:
@@ -295,7 +298,7 @@ class ClassFileOperations {
 			if(0<$depth && !$this->nocollect)$reference->code .= "\n".$line;
 			$depth -= $this->count("}",$line);
 			if(0>=$depth && !is_null($reference)){
-				!$this->nocollect && ($reference->extern = str_replace("die;","",$this->stuff));//preg_replace("#\n+#","\n",preg_replace("#(\n;)#","\n",
+				!$this->nocollect && ($reference->extern = $this->stuff);
 				break;
 			}
 		}while(++$l<count($this->lines));
