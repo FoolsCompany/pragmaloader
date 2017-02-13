@@ -11,4 +11,4 @@ require_once(__DIR__."/classes/Sandbox.php");
 
 Sandbox::init("http://blez.anthrax","/code/msc/blez/public",$url);
 Sandbox::route($url);
-Sandbox::dump("sandbox",false,false);
+Sandbox::dump("-",false,false);
