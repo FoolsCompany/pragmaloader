@@ -16,3 +16,4 @@ Without specifying in security conscious non-functional requirements, that dynam
 
 Whilst globals are being transformed, the linterman's job will be complex. This autoloader is intended to make such transformations simpler, more complete more rapidly.
 
+N.B. This code was 'complete' in a very short space of time, and this is only because of an argument over lazy-loading.
